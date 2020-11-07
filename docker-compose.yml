@@ -1,0 +1,63 @@
+version: "3.8"
+
+services:
+  gateway:
+    build: ./ApiGatewayMicroservice
+    ports:
+      - 3000:80
+    environment:
+      BOOKS_SERVICE_API_ROUTE: books-service/api
+      NODE_ENV: development
+    networks:
+      - internal
+  
+  books-service:
+    build: ./BooksMicroservice
+    environment:
+      IO_SERVICE_API_ROUTE: io-service/api
+      NODE_ENV: development
+    networks:
+      - internal
+      - books
+  
+  io-service:
+    build: ./IOMicroservice
+    environment:
+      PGUSER: admin
+      PGPASSWORD: admin
+      PGHOST: db
+      PGPORT: 5432
+      PGDATABASE: books
+      NODE_ENV: development
+    networks:
+      - books
+      - database
+      
+  db:
+    image: postgres:12
+    environment:
+      POSTGRES_DB: books
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - ./Database/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+      - lab4-db:/var/lib/postgresql/data
+    networks:
+      - database
+      - database-admin
+      
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+    networks:
+      - database-admin
+
+volumes:
+  lab4-db:
+
+networks:
+  internal:
+  books:
+  database:
+  database-admin:
