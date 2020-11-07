@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   gateway:
-    build: ./ApiGatewayMicroservice
+    image: florinrm/cloud-computing:gateway
     ports:
       - 3000:80
     environment:
@@ -12,7 +12,7 @@ services:
       - internal
   
   books-service:
-    build: ./BooksMicroservice
+    image: florinrm/cloud-computing:books
     environment:
       IO_SERVICE_API_ROUTE: io-service/api
       NODE_ENV: development
@@ -21,7 +21,7 @@ services:
       - books
   
   io-service:
-    build: ./IOMicroservice
+    image: florinrm/cloud-computing:io
     environment:
       PGUSER: admin
       PGPASSWORD: admin
