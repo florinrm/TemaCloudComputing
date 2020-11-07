@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  gateway:
+  gateway-service:
     image: florinrm/cloud-computing:gateway
     ports:
       - 3000:80
@@ -9,7 +9,7 @@ services:
       BOOKS_SERVICE_API_ROUTE: books-service/api
       NODE_ENV: development
     networks:
-      - internal
+      - gate
   
   books-service:
     image: florinrm/cloud-computing:books
@@ -17,7 +17,7 @@ services:
       IO_SERVICE_API_ROUTE: io-service/api
       NODE_ENV: development
     networks:
-      - internal
+      - gate
       - books
   
   io-service:
@@ -41,23 +41,23 @@ services:
       POSTGRES_PASSWORD: admin
     volumes:
       - ./Database/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
-      - lab4-db:/var/lib/postgresql/data
+      - homework-db:/var/lib/postgresql/data
     networks:
       - database
-      - database-admin
+      - db-admin
       
   adminer:
     image: adminer
     ports:
       - 8080:8080
     networks:
-      - database-admin
+      - db-admin
 
 volumes:
-  lab4-db:
+  homework-db:
 
 networks:
-  internal:
+  gate:
   books:
   database:
-  database-admin:
+  db-admin:
